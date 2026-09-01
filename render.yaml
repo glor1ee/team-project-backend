@@ -1,0 +1,16 @@
+# Render deployment blueprint — https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: team-project-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -e .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: CORS_ORIGINS
+        sync: false  # set to the deployed frontend URL in the Render dashboard
