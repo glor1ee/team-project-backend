@@ -1,0 +1,23 @@
+# Local PostgreSQL for development.
+#   docker compose up -d db      # start
+#   docker compose down          # stop (keeps data)
+#   docker compose down -v       # stop and wipe data
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: easyrent
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
