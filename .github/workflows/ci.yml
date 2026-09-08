@@ -11,6 +11,28 @@ jobs:
     name: Lint, type-check and test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: easyrent
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      SECRET_KEY: ci-secret-key-not-used-in-production
+      DEBUG: "True"
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/easyrent
+      CORS_ORIGINS: http://localhost:5173
+
     steps:
       - uses: actions/checkout@v4
 
@@ -30,7 +52,13 @@ jobs:
         run: ruff format --check .
 
       - name: Type check (mypy)
-        run: mypy app
+        run: mypy .
+
+      - name: Missing migrations check
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Migrate
+        run: python manage.py migrate
 
       - name: Tests (pytest)
-        run: pytest --cov=app --cov-report=term-missing
+        run: pytest --cov=apps --cov=config --cov-report=term-missing
