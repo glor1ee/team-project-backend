@@ -80,10 +80,19 @@ TEMPLATES = [
 ]
 
 
-# Database — https://django-environ.readthedocs.io/
+# Database
+# Connection is taken from the DATABASE_URL env var, e.g.
+#   postgres://user:password@host:5432/dbname
+# Locally: `docker compose up -d db` (see docker-compose.yml).
 
 DATABASES = {
-    "default": env.db("DATABASE_URL"),
+    "default": {
+        **env.db("DATABASE_URL"),
+        # Reuse connections instead of opening one per request.
+        "CONN_MAX_AGE": env.int("CONN_MAX_AGE", default=60),
+        # Drop a connection that died while pooled (Django 4.1+).
+        "CONN_HEALTH_CHECKS": True,
+    },
 }
 
 
