@@ -13,6 +13,7 @@ dependencies = [
     "django-cors-headers>=4.6",
     "drf-spectacular>=0.28",
     "gunicorn>=23.0",
+    "whitenoise[brotli]>=6.8",
 ]
 
 [project.optional-dependencies]
@@ -43,12 +44,17 @@ extend-exclude = ["migrations"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
 
+[tool.ruff.lint.per-file-ignores]
+# Settings modules re-export names through star imports on purpose.
+"config/settings/*" = ["F403", "F405"]
+
 [tool.ruff.format]
 quote-style = "double"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.development"
-testpaths = ["tests"]
+testpaths = ["tests", "apps"]
+python_files = ["test_*.py"]
 addopts = "-q"
 
 [tool.mypy]
