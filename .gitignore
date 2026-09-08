@@ -27,6 +27,12 @@ coverage.xml
 *.sqlite3
 *.db
 
+# Django
+/staticfiles/
+/media/
+/logs/
+local_settings.py
+
 # IDE / OS
 .idea/
 .vscode/
