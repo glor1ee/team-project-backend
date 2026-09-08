@@ -68,17 +68,28 @@ pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-`.env` is git-ignored — never commit real secrets. Point `DATABASE_URL` at a local
-PostgreSQL database you have created, e.g. `easyrent`.
+`.env` is git-ignored — never commit real secrets.
 
-### 5. Apply migrations and create an admin user
+### 5. Start PostgreSQL
+
+The repo ships a `docker-compose.yml` with a ready-to-use database that matches the
+default `DATABASE_URL`:
+
+```bash
+docker compose up -d db
+```
+
+No Docker? Create a `easyrent` database in your own PostgreSQL instance and point
+`DATABASE_URL` at it.
+
+### 6. Apply migrations and create an admin user
 
 ```bash
 python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 6. Run the server
+### 7. Run the server
 
 ```bash
 python manage.py runserver
@@ -86,7 +97,7 @@ python manage.py runserver
 
 The API is available at <http://127.0.0.1:8000>, the admin at <http://127.0.0.1:8000/admin/>.
 
-### 7. Install git hooks (optional but recommended)
+### 8. Install git hooks (optional but recommended)
 
 ```bash
 pre-commit install
