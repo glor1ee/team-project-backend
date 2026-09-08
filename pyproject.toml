@@ -1,40 +1,5 @@
-[project]
-name = "team-project-backend"
-version = "0.1.0"
-description = "Team Project — backend API (Django + DRF)"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "django>=5.1",
-    "djangorestframework>=3.15",
-    "psycopg[binary]>=3.2",
-    "django-environ>=0.11",
-    "django-filter>=24.3",
-    "django-cors-headers>=4.6",
-    "drf-spectacular>=0.28",
-    "gunicorn>=23.0",
-    "whitenoise[brotli]>=6.8",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.3",
-    "pytest-django>=4.9",
-    "pytest-cov>=6.0",
-    "ruff>=0.8",
-    "mypy>=1.13",
-    "pre-commit>=4.0",
-]
-
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
-
-# The Django project is run through manage.py, not imported as a package,
-# so there is nothing for setuptools to build — `pip install -e .` only
-# needs to resolve the dependencies above.
-[tool.setuptools]
-py-modules = []
+# Dependencies live in requirements.txt / requirements-dev.txt.
+# This file only holds tool configuration.
 
 [tool.ruff]
 line-length = 88
@@ -53,6 +18,7 @@ quote-style = "double"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.development"
+pythonpath = ["."]
 testpaths = ["tests", "apps"]
 python_files = ["test_*.py"]
 addopts = "-q"

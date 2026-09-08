@@ -59,8 +59,11 @@ source venv/bin/activate
 ### 3. Install dependencies
 
 ```bash
-pip install -e ".[dev]"
+pip install -r requirements-dev.txt
 ```
+
+Runtime-only dependencies live in `requirements.txt`; `requirements-dev.txt`
+adds the test and lint tooling.
 
 ### 4. Create the environment file
 
@@ -146,7 +149,9 @@ team-project-backend/
 │       └── services.py         # business logic (kept out of views)
 ├── tests/
 ├── manage.py
-├── pyproject.toml              # dependencies + tool configuration
+├── requirements.txt            # runtime dependencies
+├── requirements-dev.txt        # + test & lint tooling
+├── pyproject.toml              # tool configuration (ruff, mypy, pytest)
 └── render.yaml                 # Render deployment blueprint
 ```
 
@@ -221,10 +226,11 @@ Keep the history clean — one logical change per commit.
 1. Push the repository to GitHub.
 2. In Render, create a **New → Blueprint** and point it at this repository —
    [`render.yaml`](render.yaml) is picked up automatically.
-3. Provision a managed PostgreSQL instance; Render injects `DATABASE_URL`.
-4. Set `SECRET_KEY` and `CORS_ORIGINS` in the Render dashboard.
-5. Build runs `pip install -e .` and `python manage.py migrate`;
-   the service starts with `gunicorn config.wsgi`.
+3. The blueprint provisions a managed PostgreSQL instance and injects `DATABASE_URL`.
+4. Set `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` and `CORS_ORIGINS` in the Render dashboard
+   (`SECRET_KEY` is generated automatically).
+5. Build runs `pip install -r requirements.txt`, `collectstatic` and `migrate`;
+   the service starts with `gunicorn config.wsgi:application`.
 
 ---
 
