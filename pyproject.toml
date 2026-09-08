@@ -1,20 +1,25 @@
 [project]
 name = "team-project-backend"
 version = "0.1.0"
-description = "Team Project — backend API (FastAPI)"
+description = "Team Project — backend API (Django + DRF)"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi>=0.115",
-    "uvicorn[standard]>=0.32",
-    "pydantic-settings>=2.6",
+    "django>=5.1",
+    "djangorestframework>=3.15",
+    "psycopg[binary]>=3.2",
+    "django-environ>=0.11",
+    "django-filter>=24.3",
+    "django-cors-headers>=4.6",
+    "drf-spectacular>=0.28",
+    "gunicorn>=23.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3",
+    "pytest-django>=4.9",
     "pytest-cov>=6.0",
-    "httpx>=0.28",
     "ruff>=0.8",
     "mypy>=1.13",
     "pre-commit>=4.0",
@@ -24,26 +29,29 @@ dev = [
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-include = ["app*"]
+# The Django project is run through manage.py, not imported as a package,
+# so there is nothing for setuptools to build — `pip install -e .` only
+# needs to resolve the dependencies above.
+[tool.setuptools]
+py-modules = []
 
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+extend-exclude = ["migrations"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
-ignore = ["B008"]  # FastAPI Depends() in defaults is idiomatic
 
 [tool.ruff.format]
 quote-style = "double"
 
 [tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.development"
 testpaths = ["tests"]
 addopts = "-q"
 
 [tool.mypy]
 python_version = "3.12"
-strict = true
-plugins = []
 ignore_missing_imports = true
+exclude = ["migrations"]
