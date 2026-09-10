@@ -69,8 +69,10 @@ Work through the features **one by one, commit by commit**. For every feature:
 3. Frontend: API call → component → page → states (loading / empty / error)
 4. Open a Pull Request into `develop`, get a review, merge
 
-Feature backlog (equipment-rental service):
+Feature backlog (equipment-rental service) — see [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the milestone breakdown:
 
+- [ ] Cities & pickup points — `GET /api/cities/` for the header/footer city selector
+- [ ] Customer reviews — moderated `GET /api/reviews/`
 - [ ] Equipment catalog — list with filters (category, city, price, availability), search, sorting, pagination
 - [ ] Equipment detail — full specs, gallery, "what's included", use-case tags
 - [ ] Availability calendar — booked dates per equipment for a given month
