@@ -71,8 +71,8 @@ Work through the features **one by one, commit by commit**. For every feature:
 
 Feature backlog (equipment-rental service) — see [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the milestone breakdown:
 
-- [ ] Cities & pickup points — `GET /api/cities/` for the header/footer city selector
-- [ ] Customer reviews — moderated `GET /api/reviews/`
+- [x] Cities & pickup points — `GET /api/cities/` for the header/footer city selector
+- [x] Customer reviews — moderated `GET /api/reviews/`
 - [ ] Equipment catalog — list with filters (category, city, price, availability), search, sorting, pagination
 - [ ] Equipment detail — full specs, gallery, "what's included", use-case tags
 - [ ] Availability calendar — booked dates per equipment for a given month

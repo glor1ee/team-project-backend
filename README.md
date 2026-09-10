@@ -121,6 +121,7 @@ Generated automatically by drf-spectacular:
 | --- | --- | --- |
 | GET | `/api/cities/` | List of active service cities with pickup point info |
 | GET | `/api/cities/{slug}/` | Single city detail |
+| GET | `/api/reviews/` | Published customer reviews, newest first (paginated) |
 
 See [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the full planned API.
 
