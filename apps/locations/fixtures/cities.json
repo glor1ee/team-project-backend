@@ -1,0 +1,58 @@
+[
+  {
+    "model": "locations.city",
+    "pk": 1,
+    "fields": {
+      "name": "Луцьк",
+      "slug": "lutsk",
+      "is_default": true,
+      "is_active": true,
+      "order": 1,
+      "pickup_address": "м. Луцьк, просп. Волі, 1",
+      "pickup_phone": "+380 (50) 123-45-67",
+      "working_hours": "Пн-Нд: Цілодобово"
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 2,
+    "fields": {
+      "name": "Львів",
+      "slug": "lviv",
+      "is_default": false,
+      "is_active": true,
+      "order": 2,
+      "pickup_address": "м. Львів, вул. Городоцька, 100",
+      "pickup_phone": "+380 (50) 123-45-67",
+      "working_hours": "Пн-Нд: Цілодобово"
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 3,
+    "fields": {
+      "name": "Київ",
+      "slug": "kyiv",
+      "is_default": false,
+      "is_active": true,
+      "order": 3,
+      "pickup_address": "м. Київ, вул. Хрещатик, 10",
+      "pickup_phone": "+380 (50) 123-45-67",
+      "working_hours": "Пн-Нд: Цілодобово"
+    }
+  },
+  {
+    "model": "locations.city",
+    "pk": 4,
+    "fields": {
+      "name": "Одеса",
+      "slug": "odesa",
+      "is_default": false,
+      "is_active": true,
+      "order": 4,
+      "pickup_address": "м. Одеса, вул. Дерибасівська, 5",
+      "pickup_phone": "+380 (50) 123-45-67",
+      "working_hours": "Пн-Нд: Цілодобово"
+    }
+  }
+]
