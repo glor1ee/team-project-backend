@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -9,6 +8,7 @@ class City(models.Model):
     is_active = models.BooleanField(default=True)
     order = models.PositiveSmallIntegerField(default=0)
 
+    # Pickup point — shown in the header, footer and city selector.
     pickup_address = models.CharField(max_length=255, blank=True)
     pickup_phone = models.CharField(max_length=32, blank=True)
     working_hours = models.CharField(max_length=64, default="Пн-Нд: Цілодобово")
@@ -21,13 +21,10 @@ class City(models.Model):
     def __str__(self):
         return self.name
 
-    def clean(self):
-        if self.is_default:
-            clash = City.objects.filter(is_default=True).exclude(pk=self.pk)
-            if clash.exists():
-                raise ValidationError({"is_default": "Another city is already the default."})
-
     def save(self, *args, **kwargs):
+        # Keep exactly one default city.
         if self.is_default:
-            City.objects.filter(is_default=True).exclude(pk=self.pk).update(is_default=False)
+            City.objects.filter(is_default=True).exclude(pk=self.pk).update(
+                is_default=False
+            )
         super().save(*args, **kwargs)
