@@ -1,0 +1,26 @@
+[
+  {"model": "reviews.review", "pk": 1, "fields": {
+    "author_name": "Олена Ковальчук", "avatar": "", "rating": 5,
+    "text": "Орендувала мийний пилосос на вихідні — техніка чиста, з хімією та інструктажем. Доставили вчасно.",
+    "published_on": "2026-07-14", "is_published": true}},
+  {"model": "reviews.review", "pk": 2, "fields": {
+    "author_name": "Андрій Мельник", "avatar": "", "rating": 5,
+    "text": "Брав пароочисник для генерального прибирання. Дуже виручило, купувати такий не мав сенсу.",
+    "published_on": "2026-07-28", "is_published": true}},
+  {"model": "reviews.review", "pk": 3, "fields": {
+    "author_name": "Ірина Бондар", "avatar": "", "rating": 4,
+    "text": "Все сподобалось, єдине — хотілось би більше слотів на вечірню доставку.",
+    "published_on": "2026-08-05", "is_published": true}},
+  {"model": "reviews.review", "pk": 4, "fields": {
+    "author_name": "Сергій Ткаченко", "avatar": "", "rating": 5,
+    "text": "Робот-мийник вікон — топ. Замовлення оформив за 5 хвилин, менеджер передзвонив одразу.",
+    "published_on": "2026-08-19", "is_published": true}},
+  {"model": "reviews.review", "pk": 5, "fields": {
+    "author_name": "Марія Гнатюк", "avatar": "", "rating": 5,
+    "text": "Орендувала фен для сушіння після хімчистки килима. Результат як у салоні.",
+    "published_on": "2026-08-30", "is_published": true}},
+  {"model": "reviews.review", "pk": 6, "fields": {
+    "author_name": "Олег Романюк", "avatar": "", "rating": 4,
+    "text": "Хороший сервіс, техніка робоча. Повернення без проблем, застава повернулась одразу.",
+    "published_on": "2026-09-03", "is_published": true}}
+]
