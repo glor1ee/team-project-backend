@@ -115,6 +115,15 @@ Generated automatically by drf-spectacular:
 - Swagger UI — <http://127.0.0.1:8000/api/docs/>
 - OpenAPI schema — <http://127.0.0.1:8000/api/schema/>
 
+### Endpoints
+
+| Method | Path | Description |
+| --- | --- | --- |
+| GET | `/api/cities/` | List of active service cities with pickup point info |
+| GET | `/api/cities/{slug}/` | Single city detail |
+
+See [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the full planned API.
+
 ---
 
 ## Environment variables
