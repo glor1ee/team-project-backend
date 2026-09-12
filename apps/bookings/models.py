@@ -58,3 +58,26 @@ class Booking(models.Model):
 
     def __str__(self):
         return self.number
+
+
+class CallbackRequest(models.Model):
+    equipment = models.ForeignKey(
+        Equipment,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="callback_requests",
+    )
+    phone = models.CharField(max_length=20)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    comment = models.TextField(blank=True)
+    is_processed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        status = "оброблено" if self.is_processed else "нова"
+        return f"{self.phone} ({status})"

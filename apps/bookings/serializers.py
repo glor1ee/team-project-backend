@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.bookings.models import Booking
+from apps.bookings.models import Booking, CallbackRequest
 from apps.bookings.services import BookingError, create_booking
 from apps.catalog.models import Equipment
 from apps.locations.models import City
@@ -86,3 +86,16 @@ class BookingQuoteResponseSerializer(serializers.Serializer):
     price_per_day = serializers.DecimalField(max_digits=8, decimal_places=2)
     delivery_fee = serializers.DecimalField(max_digits=8, decimal_places=2)
     total_price = serializers.DecimalField(max_digits=8, decimal_places=2)
+
+
+class CallbackRequestSerializer(serializers.ModelSerializer):
+    equipment = serializers.SlugRelatedField(
+        slug_field="slug",
+        queryset=Equipment.objects.filter(is_active=True),
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta:
+        model = CallbackRequest
+        fields = ("equipment", "phone", "start_date", "end_date", "comment")

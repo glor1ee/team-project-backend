@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.contrib import admin
 
-from apps.bookings.models import Booking
+from apps.bookings.models import Booking, CallbackRequest
 
 
 @admin.register(Booking)
@@ -29,7 +29,9 @@ class BookingAdmin(admin.ModelAdmin):
     )
     actions = ["apply_instagram_discount"]
 
-    @admin.action(description="Apply 10% Instagram discount")
+    # "%%" is required: Django %-formats every action description against
+    # model_format_dict(), so a literal "%" crashes the whole changelist.
+    @admin.action(description="Apply 10%% Instagram discount")
     def apply_instagram_discount(self, request, queryset):
         updated = 0
         for booking in queryset:
@@ -43,3 +45,23 @@ class BookingAdmin(admin.ModelAdmin):
             booking.save(update_fields=["discount_amount", "total_price"])
             updated += 1
         self.message_user(request, f"Знижку застосовано до {updated} бронювань.")
+
+
+@admin.register(CallbackRequest)
+class CallbackRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "phone",
+        "equipment",
+        "start_date",
+        "end_date",
+        "is_processed",
+        "created_at",
+    )
+    list_filter = ("is_processed",)
+    search_fields = ("phone",)
+    actions = ["mark_processed"]
+
+    @admin.action(description="Mark as processed")
+    def mark_processed(self, request, queryset):
+        updated = queryset.update(is_processed=True)
+        self.message_user(request, f"{updated} заявок позначено обробленими.")

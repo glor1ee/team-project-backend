@@ -1,12 +1,14 @@
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.bookings.models import CallbackRequest
 from apps.bookings.serializers import (
     BookingCreateSerializer,
     BookingQuoteResponseSerializer,
     BookingQuoteSerializer,
+    CallbackRequestSerializer,
 )
 from apps.bookings.services import quote_price
 
@@ -35,3 +37,9 @@ class BookingQuoteView(APIView):
             delivery_method=data["delivery_method"],
         )
         return Response(BookingQuoteResponseSerializer(pricing).data)
+
+
+class CallbackRequestCreateView(generics.CreateAPIView):
+    queryset = CallbackRequest.objects.all()
+    serializer_class = CallbackRequestSerializer
+    permission_classes = [AllowAny]
