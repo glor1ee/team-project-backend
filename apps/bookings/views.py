@@ -5,22 +5,34 @@ from rest_framework.views import APIView
 
 from apps.bookings.models import CallbackRequest
 from apps.bookings.serializers import (
+    BookingCancelSerializer,
     BookingCreateSerializer,
     BookingQuoteResponseSerializer,
     BookingQuoteSerializer,
-    CallbackRequestSerializer, BookingSerializer, BookingCancelSerializer,
+    BookingSerializer,
+    CallbackRequestSerializer,
 )
 from apps.bookings.services import (
-    quote_price,
-    get_bookings_by_phone,
+    BookingNotCancellableError,
     BookingNotFoundError,
     cancel_booking,
-    BookingNotCancellableError
+    get_bookings_by_phone,
+    quote_price,
 )
 
 
-class BookingCreateView(APIView):
+class BookingListCreateView(APIView):
     permission_classes = [AllowAny]
+
+    def get(self, request):
+        phone = request.query_params.get("phone")
+        if not phone:
+            return Response(
+                {"phone": ["This query parameter is required."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        bookings = get_bookings_by_phone(phone)
+        return Response(BookingSerializer(bookings, many=True).data)
 
     def post(self, request):
         serializer = BookingCreateSerializer(data=request.data)
@@ -45,32 +57,6 @@ class BookingQuoteView(APIView):
         return Response(BookingQuoteResponseSerializer(pricing).data)
 
 
-class CallbackRequestCreateView(generics.CreateAPIView):
-    queryset = CallbackRequest.objects.all()
-    serializer_class = CallbackRequestSerializer
-    permission_classes = [AllowAny]
-
-
-class BookingListCreateView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        phone = request.query_params.get("phone")
-        if not phone:
-            return Response(
-                {"phone": ["This query parameter is required."]},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        bookings = get_bookings_by_phone(phone)
-        return Response(BookingSerializer(bookings, many=True).data)
-
-    def post(self, request):
-        serializer = BookingCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 class BookingCancelView(APIView):
     permission_classes = [AllowAny]
 
@@ -86,3 +72,9 @@ class BookingCancelView(APIView):
         except BookingNotCancellableError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(BookingSerializer(booking).data)
+
+
+class CallbackRequestCreateView(generics.CreateAPIView):
+    queryset = CallbackRequest.objects.all()
+    serializer_class = CallbackRequestSerializer
+    permission_classes = [AllowAny]
