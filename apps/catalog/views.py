@@ -20,7 +20,9 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         Equipment.objects.filter(is_active=True)
         .select_related("category")
-        .prefetch_related("images", "specs", "included_items", "benefits", "available_cities")
+        .prefetch_related(
+            "images", "specs", "included_items", "benefits", "available_cities"
+        )
     )
     lookup_field = "slug"
     pagination_class = EquipmentPagination

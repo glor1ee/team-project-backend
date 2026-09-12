@@ -22,8 +22,14 @@ class EquipmentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
         fields = (
-            "id", "name", "slug", "category",
-            "price_per_day", "rating", "main_image", "is_popular",
+            "id",
+            "name",
+            "slug",
+            "category",
+            "price_per_day",
+            "rating",
+            "main_image",
+            "is_popular",
         )
 
 
@@ -64,9 +70,19 @@ class EquipmentDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
         fields = (
-            "id", "name", "slug", "sku", "category",
-            "short_description", "description",
-            "price_per_day", "rating", "main_image",
-            "images", "specs", "included_items", "benefits",
+            "id",
+            "name",
+            "slug",
+            "sku",
+            "category",
+            "short_description",
+            "description",
+            "price_per_day",
+            "rating",
+            "main_image",
+            "images",
+            "specs",
+            "included_items",
+            "benefits",
             "available_cities",
         )

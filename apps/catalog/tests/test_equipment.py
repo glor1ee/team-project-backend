@@ -17,8 +17,12 @@ def cities():
 @pytest.fixture
 def categories():
     return {
-        "vacuum": Category.objects.create(name="Пилососи", slug="vacuum-cleaners", order=1),
-        "steam": Category.objects.create(name="Пароочисники", slug="steam-cleaners", order=2),
+        "vacuum": Category.objects.create(
+            name="Пилососи", slug="vacuum-cleaners", order=1
+        ),
+        "steam": Category.objects.create(
+            name="Пароочисники", slug="steam-cleaners", order=2
+        ),
     }
 
 
@@ -90,9 +94,19 @@ def test_is_popular_filter(client, equipment):
 def test_detail_includes_nested_blocks(client, equipment):
     data = client.get("/api/equipment/karcher-puzzi-8-1/").json()
     assert set(data) >= {
-        "id", "name", "slug", "sku", "category", "description",
-        "price_per_day", "rating", "images", "specs",
-        "included_items", "benefits", "available_cities",
+        "id",
+        "name",
+        "slug",
+        "sku",
+        "category",
+        "description",
+        "price_per_day",
+        "rating",
+        "images",
+        "specs",
+        "included_items",
+        "benefits",
+        "available_cities",
     }
     assert data["available_cities"] == ["lutsk"]
 
@@ -100,8 +114,11 @@ def test_detail_includes_nested_blocks(client, equipment):
 def test_pagination_page_size_is_8(client, categories):
     for i in range(10):
         Equipment.objects.create(
-            name=f"Item {i}", slug=f"item-{i}", sku=f"SKU-{i}",
-            category=categories["vacuum"], price_per_day="100.00",
+            name=f"Item {i}",
+            slug=f"item-{i}",
+            sku=f"SKU-{i}",
+            category=categories["vacuum"],
+            price_per_day="100.00",
         )
     data = client.get("/api/equipment/").json()
     assert len(data["results"]) == 8
