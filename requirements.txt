@@ -1,0 +1,12 @@
+# Runtime dependencies. Pinned for reproducible installs.
+#   pip install -r requirements.txt
+Django==6.1.1
+djangorestframework==3.18.1
+django-cors-headers==4.9.0
+django-environ==0.14.0
+django-filter==26.1
+drf-spectacular==0.30.0
+psycopg[binary]==3.3.5
+gunicorn==26.2.0
+whitenoise[brotli]==6.12.0
+pillow==12.3.0

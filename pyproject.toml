@@ -1,49 +1,37 @@
-[project]
-name = "team-project-backend"
-version = "0.1.0"
-description = "Team Project — backend API (FastAPI)"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "fastapi>=0.115",
-    "uvicorn[standard]>=0.32",
-    "pydantic-settings>=2.6",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.3",
-    "pytest-cov>=6.0",
-    "httpx>=0.28",
-    "ruff>=0.8",
-    "mypy>=1.13",
-    "pre-commit>=4.0",
-]
-
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-include = ["app*"]
+# Dependencies live in requirements.txt / requirements-dev.txt.
+# This file only holds tool configuration.
 
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+extend-exclude = ["migrations"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
-ignore = ["B008"]  # FastAPI Depends() in defaults is idiomatic
+ignore = [
+    # Django/DRF class attributes (Meta, admin options) are mutable by design.
+    "RUF012",
+    # Ukrainian (Cyrillic) text in strings/docstrings/comments is intentional.
+    "RUF001",
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Settings modules re-export names through star imports on purpose.
+"config/settings/*" = ["F403", "F405"]
 
 [tool.ruff.format]
 quote-style = "double"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+DJANGO_SETTINGS_MODULE = "config.settings.development"
+pythonpath = ["."]
+testpaths = ["tests", "apps"]
+python_files = ["test_*.py"]
 addopts = "-q"
 
 [tool.mypy]
 python_version = "3.12"
-strict = true
-plugins = []
 ignore_missing_imports = true
+exclude = ["migrations"]

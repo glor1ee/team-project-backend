@@ -27,8 +27,17 @@ coverage.xml
 *.sqlite3
 *.db
 
+# Django
+/staticfiles/
+/media/
+/logs/
+local_settings.py
+
 # IDE / OS
 .idea/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Claude Code — personal local settings
+.claude/settings.local.json

@@ -11,7 +11,7 @@ This document covers **both** repositories — [`team-project-backend`](https://
 - [x] Multi-repo configured — separate frontend and backend repositories
 - [x] GitHub repositories created and connected
 - [x] Git Flow agreed: `main` / `develop` / `feature/*` / `fix/*`
-- [x] Empty backend project initialised (FastAPI)
+- [x] Empty backend project initialised (Django + DRF — migrated from the initial FastAPI scaffold)
 - [x] Empty frontend project initialised (React + Vite + TypeScript)
 - [x] All required dependencies installed
 - [x] TypeScript, ESLint, Prettier, Ruff, mypy configured
@@ -27,11 +27,14 @@ This document covers **both** repositories — [`team-project-backend`](https://
 
 **Backend**
 
-- [ ] Choose and connect the database (PostgreSQL recommended; SQLite for local dev)
-- [ ] Add SQLAlchemy 2.0 + Alembic, create the first migration
-- [ ] Define the core domain models
-- [ ] Add a repository / service layer between routes and the database
-- [ ] Structured logging and a global exception handler
+- [ ] Project skeleton: `config/` with `settings/` split by environment (base / development / production)
+- [ ] Connect PostgreSQL via `django-environ` (`DATABASE_URL`), run the initial `migrate`
+- [ ] Wire up DRF, django-filter, CORS and drf-spectacular; root URLs (`/admin/`, `/api/`, schema)
+- [ ] Create the `apps/catalog` and `apps/bookings` applications
+- [ ] Define the core domain models (catalog first, then bookings) + migrations
+- [ ] Register everything in the Django admin and add a catalog seed fixture
+- [ ] Add a service layer (`apps/*/services.py`) between views and models
+- [ ] Structured logging and a DRF exception handler
 
 **Frontend**
 
@@ -46,9 +49,9 @@ This document covers **both** repositories — [`team-project-backend`](https://
 
 ## Stage 2 — Authentication
 
-- [ ] Backend: user model, registration, login, password hashing (`passlib` / `argon2`)
-- [ ] Backend: JWT access + refresh tokens, `get_current_user` dependency
-- [ ] Backend: protected route example + tests
+- [ ] Backend: staff auth via the Django admin (customers are identified by phone, no account)
+- [ ] Backend: decide if any public endpoint needs auth; if so, add DRF token/JWT auth
+- [ ] Backend: DRF permission classes on protected endpoints + tests
 - [ ] Frontend: registration and login pages with form validation
 - [ ] Frontend: token storage, auth context, automatic refresh
 - [ ] Frontend: protected routes and a redirect for unauthenticated users
@@ -62,16 +65,19 @@ This document covers **both** repositories — [`team-project-backend`](https://
 Work through the features **one by one, commit by commit**. For every feature:
 
 1. Create `feature/<name>` off `develop`
-2. Backend: model → migration → schema → route → tests
+2. Backend: model → migration → serializer → view → URL → tests
 3. Frontend: API call → component → page → states (loading / empty / error)
 4. Open a Pull Request into `develop`, get a review, merge
 
-Feature backlog (fill in from the project brief):
+Feature backlog (equipment-rental service) — see [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the milestone breakdown:
 
-- [ ] Feature 1 — _TBD_
-- [ ] Feature 2 — _TBD_
-- [ ] Feature 3 — _TBD_
-- [ ] Feature 4 — _TBD_
+- [x] Cities & pickup points — `GET /api/cities/` for the header/footer city selector
+- [x] Customer reviews — moderated `GET /api/reviews/`
+- [ ] Equipment catalog — list with filters (category, city, price, availability), search, sorting, pagination
+- [ ] Equipment detail — full specs, gallery, "what's included", use-case tags
+- [ ] Availability calendar — booked dates per equipment for a given month
+- [ ] Booking flow — create a rental with server-side availability check and price calculation
+- [ ] My bookings — look up bookings by phone number, cancel a booking
 
 ---
 
@@ -88,7 +94,7 @@ Feature backlog (fill in from the project brief):
 
 ## Stage 5 — Testing and finalisation
 
-- [ ] Backend: unit + integration tests, meaningful coverage on business logic
+- [ ] Backend: unit + integration tests (pytest-django + DRF `APIClient`), meaningful coverage on business logic
 - [ ] Frontend: component tests (Vitest + Testing Library)
 - [ ] Manual end-to-end pass through every user flow
 - [ ] Cross-browser check (Chrome, Firefox, Safari)
@@ -99,7 +105,7 @@ Feature backlog (fill in from the project brief):
 
 ## Stage 6 — Deploy
 
-- [ ] Backend deployed to [Render](https://render.com) via `render.yaml`
+- [ ] Backend deployed to [Render](https://render.com) via `render.yaml` (Gunicorn, `python manage.py migrate` on release)
 - [ ] Managed PostgreSQL instance provisioned and migrations applied
 - [ ] Frontend deployed to [Vercel](https://vercel.com)
 - [ ] `VITE_API_URL` on the frontend points at the deployed backend
