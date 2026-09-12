@@ -78,7 +78,7 @@ Feature backlog (equipment-rental service) — see [`docs/BACKEND_ROADMAP.md`](d
 - [ ] Availability calendar — booked dates per equipment for a given month
 - [x] Booking flow — create a rental with server-side availability check and price calculation
 - [x] One-click booking — record a phone number (+ optional equipment/dates) for a manager callback
-- [ ] My bookings — look up bookings by phone number, cancel a booking
+- [x] My bookings — look up bookings by phone number, cancel a booking
 
 ---
 

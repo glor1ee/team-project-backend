@@ -143,3 +143,31 @@ def create_booking(
         comment=comment,
         **pricing,
     )
+
+
+class BookingNotFoundError(BookingError):
+    pass
+
+
+class BookingNotCancellableError(BookingError):
+    pass
+
+
+def get_bookings_by_phone(phone: str):
+    return Booking.objects.filter(customer_phone=phone).order_by("-created_at")
+
+
+def cancel_booking(*, number: str, phone: str) -> Booking:
+    try:
+        booking = Booking.objects.get(number=number, customer_phone=phone)
+    except Booking.DoesNotExist as exc:
+        raise BookingNotFoundError("Бронювання не знайдено.") from exc
+
+    if booking.status not in (Booking.Status.PENDING, Booking.Status.CONFIRMED):
+        raise BookingNotCancellableError("Це бронювання вже не можна скасувати.")
+    if booking.start_date <= timezone.localdate():
+        raise BookingNotCancellableError("Оренда вже почалась — скасування недоступне.")
+
+    booking.status = Booking.Status.CANCELLED
+    booking.save(update_fields=["status", "updated_at"])
+    return booking

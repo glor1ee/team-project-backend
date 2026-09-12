@@ -127,6 +127,8 @@ Generated automatically by drf-spectacular:
 | GET | `/api/equipment/{slug}/` | Equipment detail — specs, gallery, included items, benefits, available cities |
 | POST | `/api/bookings/quote/` | Price preview for equipment + dates + delivery method, no booking created |
 | POST | `/api/bookings/` | Create a booking — server computes the price and checks availability |
+| GET | `/api/bookings/?phone=` | List that phone number's bookings, newest first (`phone` is required) |
+| POST | `/api/bookings/{number}/cancel/` | Cancel a booking — body `{"phone": "..."}` must match; only `pending`/`confirmed` bookings with a future start date can be cancelled |
 | POST | `/api/callback-requests/` | "1-click" booking — records a phone number (+ optional equipment/dates) for a manager to call back |
 
 See [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the full planned API.
