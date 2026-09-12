@@ -75,11 +75,17 @@ def assert_dates_valid(start_date: date, end_date: date) -> None:
 
 
 def assert_available(
-    *, equipment: Equipment, city, start_date: date, end_date: date,
+    *,
+    equipment: Equipment,
+    city,
+    start_date: date,
+    end_date: date,
     exclude_booking_id=None,
 ) -> None:
     if not equipment.available_cities.filter(pk=city.pk).exists():
-        raise EquipmentNotInCityError(f"«{equipment.name}» недоступна у місті {city.name}.")
+        raise EquipmentNotInCityError(
+            f"«{equipment.name}» недоступна у місті {city.name}."
+        )
 
     conflicts = Booking.objects.filter(
         equipment=equipment,
@@ -90,14 +96,24 @@ def assert_available(
     if exclude_booking_id:
         conflicts = conflicts.exclude(pk=exclude_booking_id)
     if conflicts.exists():
-        raise EquipmentNotAvailableError(f"«{equipment.name}» вже заброньована на обрані дати.")
+        raise EquipmentNotAvailableError(
+            f"«{equipment.name}» вже заброньована на обрані дати."
+        )
 
 
 @transaction.atomic
 def create_booking(
-    *, equipment: Equipment, city, customer_name: str, customer_phone: str,
-    start_date: date, end_date: date, delivery_method: str, payment_method: str,
-    delivery_address: str = "", comment: str = "",
+    *,
+    equipment: Equipment,
+    city,
+    customer_name: str,
+    customer_phone: str,
+    start_date: date,
+    end_date: date,
+    delivery_method: str,
+    payment_method: str,
+    delivery_address: str = "",
+    comment: str = "",
 ) -> Booking:
     # Lock the equipment row so two concurrent requests for it serialise.
     equipment = Equipment.objects.select_for_update().get(pk=equipment.pk)

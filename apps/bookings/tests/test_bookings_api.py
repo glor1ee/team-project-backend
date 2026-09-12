@@ -22,8 +22,11 @@ def city():
 def equipment(city):
     category = Category.objects.create(name="Пилососи", slug="vacuum-cleaners")
     eq = Equipment.objects.create(
-        name="Karcher Puzzi 8/1", slug="karcher-puzzi-8-1", sku="PUZZI-8-1",
-        category=category, price_per_day=Decimal("650.00"),
+        name="Karcher Puzzi 8/1",
+        slug="karcher-puzzi-8-1",
+        sku="PUZZI-8-1",
+        category=category,
+        price_per_day=Decimal("650.00"),
     )
     eq.available_cities.add(city)
     return eq
@@ -31,10 +34,14 @@ def equipment(city):
 
 def test_create_booking_success(client, equipment, city):
     payload = {
-        "equipment": equipment.slug, "city": city.slug,
-        "customer_name": "Іван", "customer_phone": "+380501234567",
-        "start_date": today_plus(1), "end_date": today_plus(2),
-        "delivery_method": "pickup", "payment_method": "cash",
+        "equipment": equipment.slug,
+        "city": city.slug,
+        "customer_name": "Іван",
+        "customer_phone": "+380501234567",
+        "start_date": today_plus(1),
+        "end_date": today_plus(2),
+        "delivery_method": "pickup",
+        "payment_method": "cash",
     }
     response = client.post("/api/bookings/", payload, content_type="application/json")
     assert response.status_code == 201
@@ -43,10 +50,14 @@ def test_create_booking_success(client, equipment, city):
 
 def test_create_booking_courier_requires_address(client, equipment, city):
     payload = {
-        "equipment": equipment.slug, "city": city.slug,
-        "customer_name": "Іван", "customer_phone": "+380501234567",
-        "start_date": today_plus(1), "end_date": today_plus(2),
-        "delivery_method": "courier", "payment_method": "cash",
+        "equipment": equipment.slug,
+        "city": city.slug,
+        "customer_name": "Іван",
+        "customer_phone": "+380501234567",
+        "start_date": today_plus(1),
+        "end_date": today_plus(2),
+        "delivery_method": "courier",
+        "payment_method": "cash",
     }
     response = client.post("/api/bookings/", payload, content_type="application/json")
     assert response.status_code == 400
@@ -55,24 +66,41 @@ def test_create_booking_courier_requires_address(client, equipment, city):
 
 def test_create_booking_rejects_overlap(client, equipment, city):
     payload = {
-        "equipment": equipment.slug, "city": city.slug,
-        "customer_name": "Іван", "customer_phone": "+380501234567",
-        "start_date": today_plus(1), "end_date": today_plus(5),
-        "delivery_method": "pickup", "payment_method": "cash",
+        "equipment": equipment.slug,
+        "city": city.slug,
+        "customer_name": "Іван",
+        "customer_phone": "+380501234567",
+        "start_date": today_plus(1),
+        "end_date": today_plus(5),
+        "delivery_method": "pickup",
+        "payment_method": "cash",
     }
-    assert client.post("/api/bookings/", payload, content_type="application/json").status_code == 201
+    assert (
+        client.post(
+            "/api/bookings/", payload, content_type="application/json"
+        ).status_code
+        == 201
+    )
 
     payload["start_date"], payload["end_date"] = today_plus(3), today_plus(7)
-    assert client.post("/api/bookings/", payload, content_type="application/json").status_code == 400
+    assert (
+        client.post(
+            "/api/bookings/", payload, content_type="application/json"
+        ).status_code
+        == 400
+    )
 
 
 def test_quote_endpoint(client, equipment):
     payload = {
         "equipment": equipment.slug,
-        "start_date": today_plus(1), "end_date": today_plus(3),
+        "start_date": today_plus(1),
+        "end_date": today_plus(3),
         "delivery_method": "courier",
     }
-    response = client.post("/api/bookings/quote/", payload, content_type="application/json")
+    response = client.post(
+        "/api/bookings/quote/", payload, content_type="application/json"
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["rental_days"] == 3

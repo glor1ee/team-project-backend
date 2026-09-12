@@ -32,8 +32,11 @@ def city():
 def equipment(city):
     category = Category.objects.create(name="Пилососи", slug="vacuum-cleaners")
     eq = Equipment.objects.create(
-        name="Karcher Puzzi 8/1", slug="karcher-puzzi-8-1", sku="PUZZI-8-1",
-        category=category, price_per_day=Decimal("650.00"),
+        name="Karcher Puzzi 8/1",
+        slug="karcher-puzzi-8-1",
+        sku="PUZZI-8-1",
+        category=category,
+        price_per_day=Decimal("650.00"),
     )
     eq.available_cities.add(city)
     return eq
@@ -41,9 +44,12 @@ def equipment(city):
 
 def make_booking(equipment, city, **overrides):
     data = {
-        "equipment": equipment, "city": city,
-        "customer_name": "Іван", "customer_phone": "+380501234567",
-        "start_date": today_plus(1), "end_date": today_plus(2),
+        "equipment": equipment,
+        "city": city,
+        "customer_name": "Іван",
+        "customer_phone": "+380501234567",
+        "start_date": today_plus(1),
+        "end_date": today_plus(2),
         "delivery_method": Booking.DeliveryMethod.PICKUP,
         "payment_method": Booking.PaymentMethod.CASH,
     }
@@ -58,7 +64,9 @@ def test_calculate_rental_days_is_inclusive():
 
 def test_quote_price_courier_adds_delivery_fee(equipment):
     quote = quote_price(
-        equipment=equipment, start_date=today_plus(1), end_date=today_plus(2),
+        equipment=equipment,
+        start_date=today_plus(1),
+        end_date=today_plus(2),
         delivery_method=Booking.DeliveryMethod.COURIER,
     )
     assert quote["delivery_fee"] == Decimal("100.00")
@@ -67,7 +75,9 @@ def test_quote_price_courier_adds_delivery_fee(equipment):
 
 def test_quote_price_pickup_has_no_delivery_fee(equipment):
     quote = quote_price(
-        equipment=equipment, start_date=today_plus(1), end_date=today_plus(1),
+        equipment=equipment,
+        start_date=today_plus(1),
+        end_date=today_plus(1),
         delivery_method=Booking.DeliveryMethod.PICKUP,
     )
     assert quote["delivery_fee"] == Decimal("0")
@@ -105,9 +115,13 @@ def test_create_booking_rejects_overlapping_dates(equipment, city):
 
 
 def test_cancelled_booking_does_not_block_new_one(equipment, city):
-    first = make_booking(equipment, city, start_date=today_plus(5), end_date=today_plus(10))
+    first = make_booking(
+        equipment, city, start_date=today_plus(5), end_date=today_plus(10)
+    )
     first.status = Booking.Status.CANCELLED
     first.save(update_fields=["status"])
 
-    second = make_booking(equipment, city, start_date=today_plus(8), end_date=today_plus(12))
+    second = make_booking(
+        equipment, city, start_date=today_plus(8), end_date=today_plus(12)
+    )
     assert second.number != first.number
