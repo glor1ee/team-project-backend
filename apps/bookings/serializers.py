@@ -99,3 +99,7 @@ class CallbackRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = CallbackRequest
         fields = ("equipment", "phone", "start_date", "end_date", "comment")
+
+
+class BookingCancelSerializer(serializers.Serializer):
+    phone = serializers.CharField(max_length=20)
