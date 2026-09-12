@@ -125,6 +125,8 @@ Generated automatically by drf-spectacular:
 | GET | `/api/categories/` | Active equipment categories |
 | GET | `/api/equipment/` | Equipment list — filter by `category`, `city`, `price_min`/`price_max`, `is_popular`; search via `search`; sort via `ordering` (`rating` default, `price_per_day`); 8 per page |
 | GET | `/api/equipment/{slug}/` | Equipment detail — specs, gallery, included items, benefits, available cities |
+| POST | `/api/bookings/quote/` | Price preview for equipment + dates + delivery method, no booking created |
+| POST | `/api/bookings/` | Create a booking — server computes the price and checks availability |
 
 See [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the full planned API.
 
