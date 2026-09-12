@@ -29,7 +29,9 @@ class BookingAdmin(admin.ModelAdmin):
     )
     actions = ["apply_instagram_discount"]
 
-    @admin.action(description="Apply 10% Instagram discount")
+    # "%%" is required: Django %-formats every action description against
+    # model_format_dict(), so a literal "%" crashes the whole changelist.
+    @admin.action(description="Apply 10%% Instagram discount")
     def apply_instagram_discount(self, request, queryset):
         updated = 0
         for booking in queryset:
@@ -47,7 +49,14 @@ class BookingAdmin(admin.ModelAdmin):
 
 @admin.register(CallbackRequest)
 class CallbackRequestAdmin(admin.ModelAdmin):
-    list_display = ("phone", "equipment", "start_date", "end_date", "is_processed", "created_at")
+    list_display = (
+        "phone",
+        "equipment",
+        "start_date",
+        "end_date",
+        "is_processed",
+        "created_at",
+    )
     list_filter = ("is_processed",)
     search_fields = ("phone",)
     actions = ["mark_processed"]
