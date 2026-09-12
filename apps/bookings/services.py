@@ -166,9 +166,7 @@ def cancel_booking(*, number: str, phone: str) -> Booking:
     if booking.status not in (Booking.Status.PENDING, Booking.Status.CONFIRMED):
         raise BookingNotCancellableError("Це бронювання вже не можна скасувати.")
     if booking.start_date <= timezone.localdate():
-        raise BookingNotCancellableError(
-            "Оренда вже почалась — скасування недоступне."
-        )
+        raise BookingNotCancellableError("Оренда вже почалась — скасування недоступне.")
 
     booking.status = Booking.Status.CANCELLED
     booking.save(update_fields=["status", "updated_at"])

@@ -24,8 +24,11 @@ def city():
 def equipment(city):
     category = Category.objects.create(name="Пилососи", slug="vacuum-cleaners")
     eq = Equipment.objects.create(
-        name="Karcher Puzzi 8/1", slug="karcher-puzzi-8-1", sku="PUZZI-8-1",
-        category=category, price_per_day=Decimal("650.00"),
+        name="Karcher Puzzi 8/1",
+        slug="karcher-puzzi-8-1",
+        sku="PUZZI-8-1",
+        category=category,
+        price_per_day=Decimal("650.00"),
     )
     eq.available_cities.add(city)
     return eq
@@ -34,9 +37,12 @@ def equipment(city):
 @pytest.fixture
 def booking(equipment, city):
     return create_booking(
-        equipment=equipment, city=city,
-        customer_name="Іван", customer_phone="+380501234567",
-        start_date=today_plus(5), end_date=today_plus(7),
+        equipment=equipment,
+        city=city,
+        customer_name="Іван",
+        customer_phone="+380501234567",
+        start_date=today_plus(5),
+        end_date=today_plus(7),
         delivery_method=Booking.DeliveryMethod.PICKUP,
         payment_method=Booking.PaymentMethod.CASH,
     )
@@ -48,9 +54,12 @@ def test_lookup_requires_phone(client):
 
 def test_lookup_returns_only_matching_phone(client, booking, equipment, city):
     create_booking(
-        equipment=equipment, city=city,
-        customer_name="Петро", customer_phone="+380671112233",
-        start_date=today_plus(10), end_date=today_plus(12),
+        equipment=equipment,
+        city=city,
+        customer_name="Петро",
+        customer_phone="+380671112233",
+        start_date=today_plus(10),
+        end_date=today_plus(12),
         delivery_method=Booking.DeliveryMethod.PICKUP,
         payment_method=Booking.PaymentMethod.CASH,
     )
@@ -82,9 +91,12 @@ def test_cancel_rejects_wrong_phone(client, booking):
 
 def test_cancel_rejects_already_started(client, equipment, city):
     started = create_booking(
-        equipment=equipment, city=city,
-        customer_name="Іван", customer_phone="+380501234567",
-        start_date=today_plus(1), end_date=today_plus(3),
+        equipment=equipment,
+        city=city,
+        customer_name="Іван",
+        customer_phone="+380501234567",
+        start_date=today_plus(1),
+        end_date=today_plus(3),
         delivery_method=Booking.DeliveryMethod.PICKUP,
         payment_method=Booking.PaymentMethod.CASH,
     )
