@@ -122,6 +122,9 @@ Generated automatically by drf-spectacular:
 | GET | `/api/cities/` | List of active service cities with pickup point info |
 | GET | `/api/cities/{slug}/` | Single city detail |
 | GET | `/api/reviews/` | Published customer reviews, newest first (paginated) |
+| GET | `/api/categories/` | Active equipment categories |
+| GET | `/api/equipment/` | Equipment list — filter by `category`, `city`, `price_min`/`price_max`, `is_popular`; search via `search`; sort via `ordering` (`rating` default, `price_per_day`); 8 per page |
+| GET | `/api/equipment/{slug}/` | Equipment detail — specs, gallery, included items, benefits, available cities |
 
 See [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the full planned API.
 

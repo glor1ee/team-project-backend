@@ -8,6 +8,8 @@ from django.core.management.base import BaseCommand
 
 FIXTURES = [
     "cities",
+    "categories",
+    "equipment",
     "reviews",
 ]
 
