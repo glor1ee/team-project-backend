@@ -12,10 +12,19 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = (
-            "number", "equipment_name", "start_date", "end_date",
-            "delivery_method", "payment_method", "status",
-            "rental_days", "price_per_day", "delivery_fee",
-            "discount_amount", "total_price", "created_at",
+            "number",
+            "equipment_name",
+            "start_date",
+            "end_date",
+            "delivery_method",
+            "payment_method",
+            "status",
+            "rental_days",
+            "price_per_day",
+            "delivery_fee",
+            "discount_amount",
+            "total_price",
+            "created_at",
         )
         read_only_fields = fields
 
@@ -64,3 +73,16 @@ class BookingQuoteSerializer(serializers.Serializer):
     start_date = serializers.DateField()
     end_date = serializers.DateField()
     delivery_method = serializers.ChoiceField(choices=Booking.DeliveryMethod.choices)
+
+
+class BookingQuoteResponseSerializer(serializers.Serializer):
+    """Renders quote_price()'s dict through proper DecimalFields.
+
+    Without this, Response(plain_dict) would let DRF's JSON encoder fall
+    back to float for Decimal values (e.g. 100.0 instead of "100.00").
+    """
+
+    rental_days = serializers.IntegerField()
+    price_per_day = serializers.DecimalField(max_digits=8, decimal_places=2)
+    delivery_fee = serializers.DecimalField(max_digits=8, decimal_places=2)
+    total_price = serializers.DecimalField(max_digits=8, decimal_places=2)

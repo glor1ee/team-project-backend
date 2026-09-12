@@ -3,7 +3,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.bookings.serializers import BookingCreateSerializer, BookingQuoteSerializer
+from apps.bookings.serializers import (
+    BookingCreateSerializer,
+    BookingQuoteResponseSerializer,
+    BookingQuoteSerializer,
+)
 from apps.bookings.services import quote_price
 
 
@@ -30,4 +34,4 @@ class BookingQuoteView(APIView):
             end_date=data["end_date"],
             delivery_method=data["delivery_method"],
         )
-        return Response(pricing)
+        return Response(BookingQuoteResponseSerializer(pricing).data)
