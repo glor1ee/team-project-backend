@@ -16,8 +16,14 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "slug")
 
 
+class AvailabilitySerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=["available", "booked"])
+    available_from = serializers.DateField(allow_null=True)
+
+
 class EquipmentListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+    availability = AvailabilitySerializer(read_only=True)
 
     class Meta:
         model = Equipment
@@ -30,6 +36,7 @@ class EquipmentListSerializer(serializers.ModelSerializer):
             "rating",
             "main_image",
             "is_popular",
+            "availability",
         )
 
 
@@ -59,6 +66,7 @@ class EquipmentBenefitSerializer(serializers.ModelSerializer):
 
 class EquipmentDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+    availability = AvailabilitySerializer(read_only=True)
     images = EquipmentImageSerializer(many=True, read_only=True)
     specs = EquipmentSpecSerializer(many=True, read_only=True)
     included_items = EquipmentIncludedItemSerializer(many=True, read_only=True)
@@ -80,6 +88,7 @@ class EquipmentDetailSerializer(serializers.ModelSerializer):
             "price_per_day",
             "rating",
             "main_image",
+            "availability",
             "images",
             "specs",
             "included_items",
