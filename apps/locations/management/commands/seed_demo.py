@@ -11,6 +11,11 @@ FIXTURES = [
     "categories",
     "equipment",
     "reviews",
+    "hero",
+    "about",
+    "rental_steps",
+    "rental_terms",
+    "site_settings",
 ]
 
 
