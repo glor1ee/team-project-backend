@@ -130,6 +130,17 @@ Generated automatically by drf-spectacular:
 | GET | `/api/bookings/?phone=` | List that phone number's bookings, newest first (`phone` is required) |
 | POST | `/api/bookings/{number}/cancel/` | Cancel a booking — body `{"phone": "..."}` must match; only `pending`/`confirmed` bookings with a future start date can be cancelled |
 | POST | `/api/callback-requests/` | "1-click" booking — records a phone number (+ optional equipment/dates) for a manager to call back |
+| GET | `/api/content/hero/` | Home page hero section (title, subtitle, CTA, background image) — editable in admin |
+| GET | `/api/content/about/` | "About EasyRent" section with its ordered feature list |
+| GET | `/api/content/rental-steps/` | "How to rent" steps, active ones only, ordered |
+| GET | `/api/content/rental-terms/` | "Rental terms" cards, active ones only, ordered |
+| GET | `/api/content/settings/` | Company/bank details shown after choosing the IBAN transfer payment method |
+| GET | `/api/home/` | Aggregates hero, about, rental steps/terms, settings, cities, categories, popular equipment and reviews into one response for the landing page |
+
+Content sections (hero, about, rental steps/terms, site settings) are all editable
+through the Django admin — nothing on the home page is hardcoded on the frontend.
+`HeroSection`, `AboutSection` and `SiteSettings` are singletons (the admin hides
+"Add" once a row exists).
 
 See [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the full planned API.
 

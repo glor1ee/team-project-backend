@@ -79,6 +79,8 @@ Feature backlog (equipment-rental service) — see [`docs/BACKEND_ROADMAP.md`](d
 - [x] Booking flow — create a rental with server-side availability check and price calculation
 - [x] One-click booking — record a phone number (+ optional equipment/dates) for a manager callback
 - [x] My bookings — look up bookings by phone number, cancel a booking
+- [x] Editable home-page content — hero, about, rental steps/terms, site settings, all managed in the admin
+- [x] Home aggregator — `GET /api/home/` for a single landing-page fetch
 
 ---
 
