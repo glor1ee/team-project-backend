@@ -75,7 +75,7 @@ Feature backlog (equipment-rental service) — see [`docs/BACKEND_ROADMAP.md`](d
 - [x] Customer reviews — moderated `GET /api/reviews/`
 - [x] Equipment catalog — list with filters (category, city, price), search, sorting, pagination (availability filter comes in M8)
 - [x] Equipment detail — full specs, gallery, "what's included", benefits
-- [ ] Availability calendar — booked dates per equipment for a given month
+- [x] Availability calendar — booked dates per equipment for a given month
 - [x] Booking flow — create a rental with server-side availability check and price calculation
 - [x] One-click booking — record a phone number (+ optional equipment/dates) for a manager callback
 - [x] My bookings — look up bookings by phone number, cancel a booking

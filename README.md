@@ -123,8 +123,9 @@ Generated automatically by drf-spectacular:
 | GET | `/api/cities/{slug}/` | Single city detail |
 | GET | `/api/reviews/` | Published customer reviews, newest first (paginated) |
 | GET | `/api/categories/` | Active equipment categories |
-| GET | `/api/equipment/` | Equipment list — filter by `category`, `city`, `price_min`/`price_max`, `is_popular`; search via `search`; sort via `ordering` (`rating` default, `price_per_day`); 8 per page |
-| GET | `/api/equipment/{slug}/` | Equipment detail — specs, gallery, included items, benefits, available cities |
+| GET | `/api/equipment/` | Equipment list — filter by `category`, `city`, `price_min`/`price_max`, `is_popular`, `availability` (`available`/`booked`); search via `search`; sort via `ordering` (`rating` default, `price_per_day`); 8 per page. Each item includes `availability: {status, available_from}` |
+| GET | `/api/equipment/{slug}/` | Equipment detail — specs, gallery, included items, benefits, available cities, `availability` |
+| GET | `/api/equipment/{slug}/availability/?month=YYYY-MM` | Booked dates for that equipment in the given month (defaults to the current month) |
 | POST | `/api/bookings/quote/` | Price preview for equipment + dates + delivery method, no booking created |
 | POST | `/api/bookings/` | Create a booking — server computes the price and checks availability |
 | GET | `/api/bookings/?phone=` | List that phone number's bookings, newest first (`phone` is required) |
