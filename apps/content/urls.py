@@ -1,10 +1,11 @@
-"""Content API routes — editable homepage sections."""
+"""Content API routes — editable homepage sections + the home aggregator."""
 
 from django.urls import path
 
 from apps.content.views import (
     AboutSectionView,
     HeroSectionView,
+    HomePageView,
     RentalStepListView,
     RentalTermListView,
     SiteSettingsView,
@@ -18,4 +19,5 @@ urlpatterns = [
     path("content/rental-steps/", RentalStepListView.as_view(), name="rental-steps"),
     path("content/rental-terms/", RentalTermListView.as_view(), name="rental-terms"),
     path("content/settings/", SiteSettingsView.as_view(), name="settings"),
+    path("home/", HomePageView.as_view(), name="home"),
 ]
