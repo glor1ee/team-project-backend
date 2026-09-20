@@ -61,6 +61,14 @@ def test_home_includes_seeded_content(client):
     assert [e["slug"] for e in data["popular_equipment"]] == ["popular"]
     assert len(data["reviews"]) == 1
 
+    # regression: popular_equipment must carry the same `availability` shape
+    # as /api/equipment/ — a serializer field silently disappears from the
+    # output instead of erroring if the view forgets to annotate it.
+    assert data["popular_equipment"][0]["availability"] == {
+        "status": "available",
+        "available_from": None,
+    }
+
 
 def test_home_limits_popular_equipment_and_reviews(client):
     category = Category.objects.create(name="Пилососи", slug="vacuum-cleaners")

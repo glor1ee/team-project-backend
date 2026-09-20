@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -5,6 +7,7 @@ from rest_framework.views import APIView
 
 from apps.catalog.models import Category, Equipment
 from apps.catalog.serializers import CategorySerializer, EquipmentListSerializer
+from apps.catalog.services import annotate_availability
 from apps.content.models import (
     AboutSection,
     HeroSection,
@@ -75,11 +78,12 @@ class HomePageView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        popular_equipment = (
+        popular_equipment = list(
             Equipment.objects.filter(is_active=True, is_popular=True)
             .select_related("category")
             .order_by("-rating")[:8]
         )
+        annotate_availability(popular_equipment, date.today())
 
         data = {
             "hero": HeroSectionSerializer(HeroSection.load()).data,
