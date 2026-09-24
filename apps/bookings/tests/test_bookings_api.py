@@ -125,7 +125,7 @@ def test_create_booking_rejects_overlap(client, equipment, city):
         client.post(
             "/api/bookings/", payload, content_type="application/json"
         ).status_code
-        == 400
+        == 409
     )
 
 

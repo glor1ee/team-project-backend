@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.bookings.models import Booking, CallbackRequest, ukrainian_phone_validator
 from apps.bookings.services import (
     BookingError,
+    EquipmentNotAvailableError,
     InvalidDateRangeError,
     assert_dates_valid,
     create_booking,
@@ -67,6 +68,10 @@ class BookingCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         try:
             return create_booking(**validated_data)
+        except EquipmentNotAvailableError:
+            # A date conflict is a 409, not a validation error — the view
+            # maps it, matching the callback-request endpoint.
+            raise
         except BookingError as exc:
             raise serializers.ValidationError({"detail": str(exc)}) from exc
 

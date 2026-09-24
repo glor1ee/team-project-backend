@@ -141,7 +141,7 @@ Generated automatically by drf-spectacular:
 | GET | `/api/equipment/{slug}/availability/?month=YYYY-MM` | Booked dates for that equipment in the given month (defaults to the current month) |
 | GET | `/api/equipment/{slug}/related/?limit=` | "Інша техніка" — same category first, then filled with other active equipment (excludes the item itself); `limit` defaults to 3, capped at 12 |
 | POST | `/api/bookings/quote/` | Price preview for equipment + dates + delivery method, no booking created |
-| POST | `/api/bookings/` | Create a booking — requires `customer_name`, `customer_phone` (`+380XXXXXXXXX`), `customer_email`, dates, delivery/payment method; server computes the price and checks availability |
+| POST | `/api/bookings/` | Create a booking — requires `customer_name`, `customer_phone` (`+380XXXXXXXXX`), `customer_email`, dates, delivery/payment method; server computes the price and checks availability. 400 for invalid input, 409 if the equipment is already booked for those dates |
 | GET | `/api/bookings/?phone=` | List that phone number's bookings, newest first (`phone` is required) |
 | POST | `/api/bookings/{number}/cancel/` | Cancel a booking — body `{"phone": "..."}` must match; only `pending`/`confirmed` bookings with a future start date can be cancelled |
 | POST | `/api/callback-requests/` | "1-click" booking (a lead, not a reservation) — phone (`+380XXXXXXXXX`) + optional equipment/dates. 400 for bad phone/dates, 409 for a date conflict on the given equipment, 200 (not 201) if an identical unprocessed request already exists. Throttled to 5/hour per IP. |
