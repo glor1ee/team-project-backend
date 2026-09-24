@@ -10,6 +10,7 @@ from apps.catalog.serializers import CategorySerializer, EquipmentListSerializer
 from apps.catalog.services import annotate_availability
 from apps.content.models import (
     AboutSection,
+    DeliveryPaymentInfo,
     HeroSection,
     RentalStep,
     RentalTerm,
@@ -17,6 +18,7 @@ from apps.content.models import (
 )
 from apps.content.serializers import (
     AboutSectionSerializer,
+    DeliveryPaymentInfoSerializer,
     HeroSectionSerializer,
     RentalStepSerializer,
     RentalTermSerializer,
@@ -64,6 +66,14 @@ class RentalTermListView(ListAPIView):
     serializer_class = RentalTermSerializer
     permission_classes = [AllowAny]
     pagination_class = None
+
+
+class DeliveryPaymentInfoView(RetrieveAPIView):
+    serializer_class = DeliveryPaymentInfoSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        return DeliveryPaymentInfo.load()
 
 
 class HomePageView(APIView):
