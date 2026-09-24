@@ -1,9 +1,9 @@
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
-from apps.bookings.models import CallbackRequest
 from apps.bookings.serializers import (
     BookingCancelSerializer,
     BookingCreateSerializer,
@@ -15,9 +15,12 @@ from apps.bookings.serializers import (
 from apps.bookings.services import (
     BookingNotCancellableError,
     BookingNotFoundError,
+    EquipmentNotAvailableError,
+    InvalidDateRangeError,
     cancel_booking,
     get_bookings_by_phone,
     quote_price,
+    submit_callback_request,
 )
 
 
@@ -74,7 +77,33 @@ class BookingCancelView(APIView):
         return Response(BookingSerializer(booking).data)
 
 
-class CallbackRequestCreateView(generics.CreateAPIView):
-    queryset = CallbackRequest.objects.all()
-    serializer_class = CallbackRequestSerializer
+class CallbackRequestThrottle(AnonRateThrottle):
+    """Scoped to this one public write endpoint — deliberately not part of
+    the project-wide throttling setup (there isn't one yet, see the
+    roadmap's hardening milestone); this is a small, self-contained guard
+    against spamming the "1-click" form, not that infrastructure."""
+
+    scope = "callback_request"
+    rate = "5/hour"
+
+
+class CallbackRequestCreateView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [CallbackRequestThrottle]
+
+    def post(self, request):
+        serializer = CallbackRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            callback_request, created = submit_callback_request(
+                **serializer.validated_data
+            )
+        except InvalidDateRangeError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        except EquipmentNotAvailableError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_409_CONFLICT)
+
+        response_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(
+            CallbackRequestSerializer(callback_request).data, status=response_status
+        )
