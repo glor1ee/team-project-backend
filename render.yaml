@@ -33,3 +33,5 @@ services:
         sync: false  # set to https://<the Render service host>
       - key: CORS_ORIGINS
         sync: false  # set to the deployed frontend URL
+      - key: NUM_PROXIES
+        sync: false  # proxies in front of gunicorn (X-Forwarded-For hops) — used by rate limiting
