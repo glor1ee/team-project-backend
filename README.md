@@ -172,6 +172,7 @@ See [`docs/BACKEND_ROADMAP.md`](docs/BACKEND_ROADMAP.md) for the full planned AP
 | `DEBUG` | `True` | Debug mode — never `True` in production |
 | `DATABASE_URL` | `postgres://postgres:postgres@localhost:5432/easyrent` | PostgreSQL connection string |
 | `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated list of allowed frontend origins |
+| `AWS_STORAGE_BUCKET_NAME` (+ `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, optional `AWS_S3_ENDPOINT_URL`, `AWS_S3_REGION_NAME`, `AWS_S3_CUSTOM_DOMAIN`) | `easyrent-media` | Production: S3-compatible bucket (AWS S3, Cloudflare R2, …) for uploaded images. Unset, uploads go to local disk, which Render wipes on every deploy |
 | `NUM_PROXIES` | `1` | Production: reverse proxies in front of the app. Rate limiting takes the client IP from `X-Forwarded-For` using this; unset, the limits can be bypassed by spoofing the header |
 
 All variables are documented in [`.env.example`](.env.example).
