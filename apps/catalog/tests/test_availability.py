@@ -125,3 +125,39 @@ def test_availability_calendar_rejects_out_of_range_month(client, equipment, mon
         f"/api/equipment/{equipment.slug}/availability/?month={month}"
     )
     assert response.status_code == 400
+
+
+def test_available_from_skips_back_to_back_bookings(equipment, city):
+    make_booking(equipment, city, today_plus(0), today_plus(2))
+    second = make_booking(equipment, city, today_plus(3), today_plus(5))
+
+    expected = second.end_date + datetime.timedelta(days=1)
+    assert equipment_availability(equipment, timezone.localdate()) == {
+        "status": "booked",
+        "available_from": expected,
+    }
+
+
+def test_list_available_from_skips_back_to_back_bookings(client, equipment, city):
+    make_booking(equipment, city, today_plus(0), today_plus(2))
+    second = make_booking(equipment, city, today_plus(3), today_plus(5))
+
+    data = client.get("/api/equipment/").json()["results"][0]["availability"]
+    assert data == {
+        "status": "booked",
+        "available_from": (second.end_date + datetime.timedelta(days=1)).isoformat(),
+    }
+
+
+def test_available_from_ignores_bookings_after_a_gap(equipment, city):
+    first = make_booking(equipment, city, today_plus(0), today_plus(2))
+    make_booking(equipment, city, today_plus(5), today_plus(6))
+
+    result = equipment_availability(equipment, timezone.localdate())
+    assert result["available_from"] == first.end_date + datetime.timedelta(days=1)
+
+
+def test_future_booking_does_not_make_today_booked(equipment, city):
+    make_booking(equipment, city, today_plus(1), today_plus(2))
+    result = equipment_availability(equipment, timezone.localdate())
+    assert result == {"status": "available", "available_from": None}
