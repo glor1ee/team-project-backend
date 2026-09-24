@@ -4,8 +4,10 @@ REST API for the Team Project — an equipment-rental service — built with **D
 
 Frontend repository: [`team-project-frontend`](https://github.com/glor1ee/team-project-frontend)
 
-> 🚧 **Status:** migrating the backend from FastAPI to Django + DRF.
-> The scaffold is being built stage by stage — see [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md), Stage 1.
+> **Status:** Stage 3 (core features) is complete — catalog, bookings, quick-booking,
+> reviews, cities and all editable home/product-page content are live behind the API
+> below. See [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md) for what's next (polish,
+> testing, deploy).
 
 ---
 
@@ -25,6 +27,7 @@ Frontend repository: [`team-project-frontend`](https://github.com/glor1ee/team-p
 | Tests | pytest + pytest-django + pytest-cov |
 | Lint / format | Ruff |
 | Type checking | mypy |
+| Image handling | Pillow |
 | Hooks | pre-commit |
 | CI | GitHub Actions |
 | Deploy | Render |
@@ -91,6 +94,16 @@ No Docker? Create a `easyrent` database in your own PostgreSQL instance and poin
 python manage.py migrate
 python manage.py createsuperuser
 ```
+
+### 6a. Load demo data (optional)
+
+```bash
+python manage.py seed_demo
+```
+
+Loads every app's fixtures (cities, categories, equipment, reviews, home/product
+content) plus one demo booking, so the API and admin have real data to look at.
+Safe to run repeatedly.
 
 ### 7. Run the server
 
@@ -164,7 +177,7 @@ All variables are documented in [`.env.example`](.env.example).
 
 ---
 
-## Project structure (target)
+## Project structure
 
 ```
 team-project-backend/
@@ -177,14 +190,21 @@ team-project-backend/
 │   ├── wsgi.py
 │   └── asgi.py
 ├── apps/
-│   ├── catalog/                # equipment, categories, cities, specs
-│   └── bookings/               # rentals, availability, price calculation
-│       └── services.py         # business logic (kept out of views)
-├── tests/
+│   ├── catalog/        # categories, equipment, specs, badges, availability
+│   ├── bookings/       # bookings, quick-booking (callback requests), pricing
+│   ├── locations/      # cities/pickup points + the seed_demo command
+│   ├── reviews/        # customer reviews (moderated)
+│   └── content/        # editable home/product-page content + /api/home/
+│       # each app: models.py / serializers.py / views.py / urls.py / admin.py,
+│       # most also have services.py, fixtures/ and tests/
+├── docs/
+│   └── BACKEND_ROADMAP.md      # full milestone-by-milestone API plan
+├── tests/                       # project-level smoke tests
 ├── manage.py
 ├── requirements.txt            # runtime dependencies
 ├── requirements-dev.txt        # + test & lint tooling
 ├── pyproject.toml              # tool configuration (ruff, mypy, pytest)
+├── docker-compose.yml          # local PostgreSQL for development
 └── render.yaml                 # Render deployment blueprint
 ```
 
