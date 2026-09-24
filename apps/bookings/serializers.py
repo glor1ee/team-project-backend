@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.bookings.models import Booking, CallbackRequest
+from apps.bookings.models import Booking, CallbackRequest, ukrainian_phone_validator
 from apps.bookings.services import BookingError, create_booking
 from apps.catalog.models import Equipment
 from apps.locations.models import City
@@ -37,7 +37,10 @@ class BookingCreateSerializer(serializers.Serializer):
         slug_field="slug", queryset=City.objects.filter(is_active=True)
     )
     customer_name = serializers.CharField(max_length=150)
-    customer_phone = serializers.CharField(max_length=20)
+    customer_phone = serializers.CharField(
+        max_length=20, validators=[ukrainian_phone_validator]
+    )
+    customer_email = serializers.EmailField(max_length=254)
     start_date = serializers.DateField()
     end_date = serializers.DateField()
     delivery_method = serializers.ChoiceField(choices=Booking.DeliveryMethod.choices)
