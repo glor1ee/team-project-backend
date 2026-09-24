@@ -116,3 +116,11 @@ def test_availability_calendar_lists_booked_days(client, equipment, city):
 def test_availability_calendar_rejects_bad_month(client, equipment):
     response = client.get(f"/api/equipment/{equipment.slug}/availability/?month=bad")
     assert response.status_code == 400
+
+
+@pytest.mark.parametrize("month", ["2026-13", "2026-00", "0-05", "2026-5-1"])
+def test_availability_calendar_rejects_out_of_range_month(client, equipment, month):
+    response = client.get(
+        f"/api/equipment/{equipment.slug}/availability/?month={month}"
+    )
+    assert response.status_code == 400

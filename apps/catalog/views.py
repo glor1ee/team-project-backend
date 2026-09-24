@@ -77,6 +77,9 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
         if month_param:
             try:
                 year, month = (int(part) for part in month_param.split("-"))
+                # calendar.monthrange / date() would raise (-> 500) otherwise.
+                if not (1 <= month <= 12 and 1 <= year <= 9999):
+                    raise ValueError(month_param)
             except ValueError:
                 return Response(
                     {"month": ["Use YYYY-MM format."]},
