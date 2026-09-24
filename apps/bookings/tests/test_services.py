@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 
 import pytest
+from django.db import IntegrityError
 from django.utils import timezone
 
 from apps.bookings.models import Booking
@@ -127,3 +128,30 @@ def test_cancelled_booking_does_not_block_new_one(equipment, city):
         equipment, city, start_date=today_plus(8), end_date=today_plus(12)
     )
     assert second.number != first.number
+
+
+def test_create_booking_retries_on_booking_number_collision(
+    equipment, city, monkeypatch
+):
+    first = make_booking(equipment, city)
+    numbers = iter([first.number, "ER-99999"])
+    monkeypatch.setattr(
+        "apps.bookings.services.generate_booking_number", lambda: next(numbers)
+    )
+
+    second = make_booking(
+        equipment, city, start_date=today_plus(5), end_date=today_plus(6)
+    )
+    assert second.number == "ER-99999"
+
+
+def test_create_booking_gives_up_after_repeated_collisions(
+    equipment, city, monkeypatch
+):
+    first = make_booking(equipment, city)
+    monkeypatch.setattr(
+        "apps.bookings.services.generate_booking_number", lambda: first.number
+    )
+
+    with pytest.raises(IntegrityError):
+        make_booking(equipment, city, start_date=today_plus(5), end_date=today_plus(6))
