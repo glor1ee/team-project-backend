@@ -1,7 +1,13 @@
+from django.core.validators import RegexValidator
 from django.db import models
 
 from apps.catalog.models import Equipment
 from apps.locations.models import City
+
+ukrainian_phone_validator = RegexValidator(
+    regex=r"^\+380\d{9}$",
+    message="Введіть номер у форматі +380XXXXXXXXX.",
+)
 
 
 class Booking(models.Model):
@@ -68,7 +74,7 @@ class CallbackRequest(models.Model):
         blank=True,
         related_name="callback_requests",
     )
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20, validators=[ukrainian_phone_validator])
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     comment = models.TextField(blank=True)
