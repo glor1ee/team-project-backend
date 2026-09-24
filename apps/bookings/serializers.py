@@ -1,7 +1,12 @@
 from rest_framework import serializers
 
 from apps.bookings.models import Booking, CallbackRequest, ukrainian_phone_validator
-from apps.bookings.services import BookingError, create_booking
+from apps.bookings.services import (
+    BookingError,
+    InvalidDateRangeError,
+    assert_dates_valid,
+    create_booking,
+)
 from apps.catalog.models import Equipment
 from apps.locations.models import City
 
@@ -76,6 +81,15 @@ class BookingQuoteSerializer(serializers.Serializer):
     start_date = serializers.DateField()
     end_date = serializers.DateField()
     delivery_method = serializers.ChoiceField(choices=Booking.DeliveryMethod.choices)
+
+    def validate(self, attrs):
+        # Same date rules as a real booking — otherwise end < start yields a
+        # negative rental_days / total_price.
+        try:
+            assert_dates_valid(attrs["start_date"], attrs["end_date"])
+        except InvalidDateRangeError as exc:
+            raise serializers.ValidationError({"end_date": str(exc)}) from exc
+        return attrs
 
 
 class BookingQuoteResponseSerializer(serializers.Serializer):
