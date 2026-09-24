@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 
 import pytest
+from django.utils import timezone
 
 from apps.bookings.models import Booking
 from apps.bookings.services import create_booking
@@ -12,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 def today_plus(days):
-    return datetime.date.today() + datetime.timedelta(days=days)
+    return timezone.localdate() + datetime.timedelta(days=days)
 
 
 @pytest.fixture
@@ -103,7 +104,7 @@ def test_cancel_rejects_already_started(client, equipment, city):
         delivery_method=Booking.DeliveryMethod.PICKUP,
         payment_method=Booking.PaymentMethod.CASH,
     )
-    started.start_date = datetime.date.today()
+    started.start_date = timezone.localdate()
     started.save(update_fields=["start_date"])
 
     response = client.post(

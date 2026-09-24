@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 
 import pytest
+from django.utils import timezone
 
 from apps.bookings.models import Booking
 from apps.bookings.services import (
@@ -20,7 +21,7 @@ pytestmark = pytest.mark.django_db
 
 
 def today_plus(days):
-    return datetime.date.today() + datetime.timedelta(days=days)
+    return timezone.localdate() + datetime.timedelta(days=days)
 
 
 @pytest.fixture

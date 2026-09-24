@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 
 import pytest
+from django.utils import timezone
 
 from apps.bookings.models import Booking
 from apps.bookings.services import create_booking
@@ -13,7 +14,7 @@ pytestmark = pytest.mark.django_db
 
 
 def today_plus(days):
-    return datetime.date.today() + datetime.timedelta(days=days)
+    return timezone.localdate() + datetime.timedelta(days=days)
 
 
 @pytest.fixture
@@ -50,13 +51,13 @@ def make_booking(equipment, city, start, end):
 
 
 def test_equipment_available_with_no_bookings(equipment):
-    result = equipment_availability(equipment, datetime.date.today())
+    result = equipment_availability(equipment, timezone.localdate())
     assert result == {"status": "available", "available_from": None}
 
 
 def test_equipment_booked_today(equipment, city):
     booking = make_booking(equipment, city, today_plus(0), today_plus(2))
-    result = equipment_availability(equipment, datetime.date.today())
+    result = equipment_availability(equipment, timezone.localdate())
     assert result["status"] == "booked"
     assert result["available_from"] == booking.end_date + datetime.timedelta(days=1)
 
@@ -66,7 +67,7 @@ def test_cancelled_booking_does_not_block(equipment, city):
     booking.status = Booking.Status.CANCELLED
     booking.save(update_fields=["status"])
 
-    result = equipment_availability(equipment, datetime.date.today())
+    result = equipment_availability(equipment, timezone.localdate())
     assert result["status"] == "available"
 
 
