@@ -35,7 +35,10 @@ class Booking(models.Model):
     city = models.ForeignKey(City, on_delete=models.PROTECT, related_name="bookings")
 
     customer_name = models.CharField(max_length=150)
-    customer_phone = models.CharField(max_length=20)
+    customer_phone = models.CharField(
+        max_length=20, validators=[ukrainian_phone_validator]
+    )
+    customer_email = models.EmailField(max_length=254, default="")
 
     start_date = models.DateField()
     end_date = models.DateField()

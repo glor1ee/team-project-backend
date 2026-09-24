@@ -41,6 +41,7 @@ def make_booking(equipment, city, start, end):
         city=city,
         customer_name="Іван",
         customer_phone="+380501234567",
+        customer_email="ivan@example.com",
         start_date=start,
         end_date=end,
         delivery_method=Booking.DeliveryMethod.PICKUP,

@@ -31,6 +31,7 @@ FIXTURES = [
 # the demo booking created below can be found again on the next seed_demo
 # run instead of piling up duplicates.
 DEMO_BOOKING_PHONE = "+380000000000"
+DEMO_BOOKING_EMAIL = "demo@example.com"
 
 # How many days out the demo booking runs. A literal "booked until 12.03"
 # date (as in the mockup) would go stale the moment it's in the past, so
@@ -79,6 +80,7 @@ class Command(BaseCommand):
             city=city,
             customer_name="Демо клієнт",
             customer_phone=DEMO_BOOKING_PHONE,
+            customer_email=DEMO_BOOKING_EMAIL,
             start_date=start_date,
             end_date=end_date,
             delivery_method=Booking.DeliveryMethod.PICKUP,

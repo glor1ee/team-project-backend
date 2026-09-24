@@ -17,7 +17,7 @@ class BookingAdmin(admin.ModelAdmin):
         "total_price",
     )
     list_filter = ("status", "city", "delivery_method", "payment_method")
-    search_fields = ("number", "customer_phone", "customer_name")
+    search_fields = ("number", "customer_phone", "customer_name", "customer_email")
     readonly_fields = (
         "number",
         "rental_days",

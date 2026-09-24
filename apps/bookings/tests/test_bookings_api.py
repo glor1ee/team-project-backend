@@ -38,6 +38,7 @@ def test_create_booking_success(client, equipment, city):
         "city": city.slug,
         "customer_name": "Іван",
         "customer_phone": "+380501234567",
+        "customer_email": "ivan@example.com",
         "start_date": today_plus(1),
         "end_date": today_plus(2),
         "delivery_method": "pickup",
@@ -48,12 +49,47 @@ def test_create_booking_success(client, equipment, city):
     assert response.json()["total_price"] == "1300.00"
 
 
+def test_create_booking_rejects_invalid_email(client, equipment, city):
+    payload = {
+        "equipment": equipment.slug,
+        "city": city.slug,
+        "customer_name": "Іван",
+        "customer_phone": "+380501234567",
+        "customer_email": "not-an-email",
+        "start_date": today_plus(1),
+        "end_date": today_plus(2),
+        "delivery_method": "pickup",
+        "payment_method": "cash",
+    }
+    response = client.post("/api/bookings/", payload, content_type="application/json")
+    assert response.status_code == 400
+    assert "customer_email" in response.json()
+
+
+def test_create_booking_rejects_invalid_phone(client, equipment, city):
+    payload = {
+        "equipment": equipment.slug,
+        "city": city.slug,
+        "customer_name": "Іван",
+        "customer_phone": "0501234567",
+        "customer_email": "ivan@example.com",
+        "start_date": today_plus(1),
+        "end_date": today_plus(2),
+        "delivery_method": "pickup",
+        "payment_method": "cash",
+    }
+    response = client.post("/api/bookings/", payload, content_type="application/json")
+    assert response.status_code == 400
+    assert "customer_phone" in response.json()
+
+
 def test_create_booking_courier_requires_address(client, equipment, city):
     payload = {
         "equipment": equipment.slug,
         "city": city.slug,
         "customer_name": "Іван",
         "customer_phone": "+380501234567",
+        "customer_email": "ivan@example.com",
         "start_date": today_plus(1),
         "end_date": today_plus(2),
         "delivery_method": "courier",
@@ -70,6 +106,7 @@ def test_create_booking_rejects_overlap(client, equipment, city):
         "city": city.slug,
         "customer_name": "Іван",
         "customer_phone": "+380501234567",
+        "customer_email": "ivan@example.com",
         "start_date": today_plus(1),
         "end_date": today_plus(5),
         "delivery_method": "pickup",

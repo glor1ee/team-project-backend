@@ -110,6 +110,7 @@ def test_date_conflict_returns_409(client, equipment):
         city=city,
         customer_name="Іван",
         customer_phone="+380671112233",
+        customer_email="ivan@example.com",
         start_date=today_plus(1),
         end_date=today_plus(5),
         delivery_method=Booking.DeliveryMethod.PICKUP,
