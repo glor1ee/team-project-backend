@@ -104,3 +104,45 @@ class EquipmentBenefit(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class EquipmentBadge(models.Model):
+    """Free-form marker shown on the product page (e.g. "Оригінал Karcher",
+    "Хіт продажів"). Deliberately a flexible admin-edited list rather than
+    fixed boolean fields — the mockup badges aren't a stable, known set.
+    Availability ("Доступно" / "Заброньовано до…") is NOT one of these —
+    it's always computed, never editable, see catalog.services.
+    """
+
+    equipment = models.ForeignKey(
+        Equipment, on_delete=models.CASCADE, related_name="badges"
+    )
+    label = models.CharField(max_length=50)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.label
+
+
+class EquipmentUseCase(models.Model):
+    """ "Техніка підходить для:" list under the product page's Опис tab.
+
+    Distinct from EquipmentBenefit (short bullets next to the price) and
+    from content.AboutFeature (generic, site-wide list on the home page):
+    this one is specific to a single piece of equipment.
+    """
+
+    equipment = models.ForeignKey(
+        Equipment, on_delete=models.CASCADE, related_name="suitable_for"
+    )
+    text = models.CharField(max_length=200)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.text
