@@ -100,6 +100,31 @@ class RentalTerm(models.Model):
         return self.title
 
 
+class DeliveryPaymentInfo(models.Model):
+    """ "Доставка і оплата" tab on the product page — global text, same for
+    every product (delivery/payment terms don't vary per item)."""
+
+    title = models.CharField(max_length=200, blank=True, default="")
+    description = models.TextField(blank=True, default="")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "delivery & payment info"
+        verbose_name_plural = "delivery & payment info"
+
+    def __str__(self):
+        return self.title or "Delivery & payment info"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+
 class SiteSettings(models.Model):
     company_name = models.CharField(max_length=150, blank=True, default="")
     bank_name = models.CharField(max_length=150, blank=True, default="")
