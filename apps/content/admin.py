@@ -3,6 +3,7 @@ from django.contrib import admin
 from apps.content.models import (
     AboutFeature,
     AboutSection,
+    DeliveryPaymentInfo,
     HeroSection,
     RentalStep,
     RentalTerm,
@@ -55,3 +56,8 @@ class RentalTermAdmin(OrderedContentAdmin):
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(SingletonAdmin):
     list_display = ("company_name", "iban", "updated_at")
+
+
+@admin.register(DeliveryPaymentInfo)
+class DeliveryPaymentInfoAdmin(SingletonAdmin):
+    list_display = ("title", "updated_at")

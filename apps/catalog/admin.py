@@ -4,10 +4,12 @@ from django.utils.html import format_html
 from apps.catalog.models import (
     Category,
     Equipment,
+    EquipmentBadge,
     EquipmentBenefit,
     EquipmentImage,
     EquipmentIncludedItem,
     EquipmentSpec,
+    EquipmentUseCase,
 )
 
 
@@ -35,6 +37,16 @@ class EquipmentIncludedItemInline(admin.TabularInline):
 
 class EquipmentBenefitInline(admin.TabularInline):
     model = EquipmentBenefit
+    extra = 1
+
+
+class EquipmentBadgeInline(admin.TabularInline):
+    model = EquipmentBadge
+    extra = 1
+
+
+class EquipmentUseCaseInline(admin.TabularInline):
+    model = EquipmentUseCase
     extra = 1
 
 
@@ -68,6 +80,8 @@ class EquipmentAdmin(admin.ModelAdmin):
         EquipmentSpecInline,
         EquipmentIncludedItemInline,
         EquipmentBenefitInline,
+        EquipmentBadgeInline,
+        EquipmentUseCaseInline,
     ]
 
     @admin.display(description="Фото")
