@@ -9,16 +9,21 @@ SELECT ... FOR UPDATE on a query matching zero rows locks nothing.
 
 import random
 import string
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.db import transaction
 from django.utils import timezone
 
-from apps.bookings.models import Booking
+from apps.bookings.models import Booking, CallbackRequest
 from apps.catalog.models import Equipment
 
 DELIVERY_FEE = Decimal("100.00")
+
+# How long a repeat "1-click" request for the same phone + equipment is
+# treated as a duplicate (double submit / accidental resend) rather than a
+# new lead.
+CALLBACK_DUPLICATE_WINDOW = timedelta(minutes=5)
 
 
 class BookingError(Exception):
@@ -74,19 +79,13 @@ def assert_dates_valid(start_date: date, end_date: date) -> None:
         raise InvalidDateRangeError("Дата початку оренди не може бути в минулому.")
 
 
-def assert_available(
-    *,
-    equipment: Equipment,
-    city,
-    start_date: date,
-    end_date: date,
-    exclude_booking_id=None,
+def assert_no_overlap(
+    *, equipment: Equipment, start_date: date, end_date: date, exclude_booking_id=None
 ) -> None:
-    if not equipment.available_cities.filter(pk=city.pk).exists():
-        raise EquipmentNotInCityError(
-            f"«{equipment.name}» недоступна у місті {city.name}."
-        )
-
+    """Raise if `equipment` already has an active booking touching this
+    date range. Shared by the full booking flow (assert_available, which
+    also checks the city) and the "1-click" quick-booking flow (which
+    doesn't require a city)."""
     conflicts = Booking.objects.filter(
         equipment=equipment,
         status__in=Booking.ACTIVE_STATUSES,
@@ -99,6 +98,26 @@ def assert_available(
         raise EquipmentNotAvailableError(
             f"«{equipment.name}» вже заброньована на обрані дати."
         )
+
+
+def assert_available(
+    *,
+    equipment: Equipment,
+    city,
+    start_date: date,
+    end_date: date,
+    exclude_booking_id=None,
+) -> None:
+    if not equipment.available_cities.filter(pk=city.pk).exists():
+        raise EquipmentNotInCityError(
+            f"«{equipment.name}» недоступна у місті {city.name}."
+        )
+    assert_no_overlap(
+        equipment=equipment,
+        start_date=start_date,
+        end_date=end_date,
+        exclude_booking_id=exclude_booking_id,
+    )
 
 
 @transaction.atomic
@@ -171,3 +190,54 @@ def cancel_booking(*, number: str, phone: str) -> Booking:
     booking.status = Booking.Status.CANCELLED
     booking.save(update_fields=["status", "updated_at"])
     return booking
+
+
+def submit_callback_request(
+    *,
+    phone: str,
+    equipment: Equipment | None = None,
+    start_date: date | None = None,
+    end_date: date | None = None,
+    comment: str = "",
+) -> tuple[CallbackRequest, bool]:
+    """ "Забронювати в 1 клік" — a lead for a manager to call back, not a
+    real reservation (see the Card-page summary for why CallbackRequest
+    was chosen over Booking here).
+
+    If both dates are given, they're validated the same way a real
+    booking's dates are (not in the past, end >= start) and, when
+    equipment is also given, checked for a date conflict — but a
+    request with no dates (just a phone number) is always accepted, to
+    keep the "1-click" flow genuinely low-friction.
+
+    Returns (request, created) — `created` is False when an identical,
+    still-unprocessed request for the same phone + equipment was
+    submitted within the last few minutes (double submit / accidental
+    resend), in which case the existing request is returned instead of
+    creating a duplicate.
+    """
+    if start_date is not None and end_date is not None:
+        assert_dates_valid(start_date, end_date)
+        if equipment is not None:
+            assert_no_overlap(
+                equipment=equipment, start_date=start_date, end_date=end_date
+            )
+
+    if equipment is not None:
+        existing = CallbackRequest.objects.filter(
+            phone=phone,
+            equipment=equipment,
+            is_processed=False,
+            created_at__gte=timezone.now() - CALLBACK_DUPLICATE_WINDOW,
+        ).first()
+        if existing is not None:
+            return existing, False
+
+    request = CallbackRequest.objects.create(
+        phone=phone,
+        equipment=equipment,
+        start_date=start_date,
+        end_date=end_date,
+        comment=comment,
+    )
+    return request, True

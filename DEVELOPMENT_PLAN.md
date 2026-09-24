@@ -81,6 +81,7 @@ Feature backlog (equipment-rental service) — see [`docs/BACKEND_ROADMAP.md`](d
 - [x] My bookings — look up bookings by phone number, cancel a booking
 - [x] Editable home-page content — hero, about, rental steps/terms, site settings, all managed in the admin
 - [x] Home aggregator — `GET /api/home/` for a single landing-page fetch
+- [x] Card page backend — badges, per-product "suitable for", breadcrumbs, related equipment, delivery/payment content, hardened quick-booking (phone format, date conflict, duplicates)
 
 ---
 

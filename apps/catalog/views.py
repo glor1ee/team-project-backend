@@ -14,7 +14,11 @@ from apps.catalog.serializers import (
     EquipmentDetailSerializer,
     EquipmentListSerializer,
 )
-from apps.catalog.services import annotate_availability, equipment_availability
+from apps.catalog.services import (
+    annotate_availability,
+    equipment_availability,
+    related_equipment,
+)
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -105,3 +109,21 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
                 "unavailable_dates": sorted(unavailable),
             }
         )
+
+    @action(detail=True, methods=["get"])
+    def related(self, request, slug=None):
+        """ "Інша техніка" carousel — same category first, then filled with
+        other active equipment. `?limit=` defaults to 3, capped at 12."""
+        equipment = self.get_object()
+        try:
+            limit = int(request.query_params.get("limit", 3))
+        except ValueError:
+            return Response(
+                {"limit": ["Must be an integer."]}, status=status.HTTP_400_BAD_REQUEST
+            )
+        limit = max(1, min(limit, 12))
+
+        items = related_equipment(equipment, limit=limit)
+        annotate_availability(items, date.today())
+        serializer = EquipmentListSerializer(items, many=True)
+        return Response(serializer.data)

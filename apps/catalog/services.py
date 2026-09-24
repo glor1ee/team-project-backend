@@ -53,3 +53,28 @@ def annotate_availability(equipment_list, on_date: date) -> None:
                 "status": "booked",
                 "available_from": blocking.end_date + timedelta(days=1),
             }
+
+
+def related_equipment(equipment: Equipment, limit: int = 3) -> list[Equipment]:
+    """Equipment for the "Інша техніка" carousel: same category first
+    (best match), then top up with other active equipment if the
+    category doesn't have enough on its own. Never includes `equipment`
+    itself."""
+    base_qs = (
+        Equipment.objects.filter(is_active=True)
+        .exclude(pk=equipment.pk)
+        .select_related("category")
+    )
+
+    same_category = list(base_qs.filter(category=equipment.category)[:limit])
+    if len(same_category) >= limit:
+        return same_category
+
+    remaining = limit - len(same_category)
+    other_ids = [item.pk for item in same_category]
+    fillers = list(
+        base_qs.exclude(category=equipment.category).exclude(pk__in=other_ids)[
+            :remaining
+        ]
+    )
+    return same_category + fillers

@@ -124,22 +124,25 @@ Generated automatically by drf-spectacular:
 | GET | `/api/reviews/` | Published customer reviews, newest first (paginated) |
 | GET | `/api/categories/` | Active equipment categories |
 | GET | `/api/equipment/` | Equipment list — filter by `category`, `city`, `price_min`/`price_max`, `is_popular`, `availability` (`available`/`booked`); search via `search`; sort via `ordering` (`rating` default, `price_per_day`); 8 per page. Each item includes `availability: {status, available_from}` |
-| GET | `/api/equipment/{slug}/` | Equipment detail — specs, gallery, included items, benefits, available cities, `availability` |
+| GET | `/api/equipment/{slug}/` | Equipment detail — specs, gallery, included items, benefits, badges, `suitable_for`, `breadcrumbs`, available cities, `availability` |
 | GET | `/api/equipment/{slug}/availability/?month=YYYY-MM` | Booked dates for that equipment in the given month (defaults to the current month) |
+| GET | `/api/equipment/{slug}/related/?limit=` | "Інша техніка" — same category first, then filled with other active equipment (excludes the item itself); `limit` defaults to 3, capped at 12 |
 | POST | `/api/bookings/quote/` | Price preview for equipment + dates + delivery method, no booking created |
 | POST | `/api/bookings/` | Create a booking — server computes the price and checks availability |
 | GET | `/api/bookings/?phone=` | List that phone number's bookings, newest first (`phone` is required) |
 | POST | `/api/bookings/{number}/cancel/` | Cancel a booking — body `{"phone": "..."}` must match; only `pending`/`confirmed` bookings with a future start date can be cancelled |
-| POST | `/api/callback-requests/` | "1-click" booking — records a phone number (+ optional equipment/dates) for a manager to call back |
+| POST | `/api/callback-requests/` | "1-click" booking (a lead, not a reservation) — phone (`+380XXXXXXXXX`) + optional equipment/dates. 400 for bad phone/dates, 409 for a date conflict on the given equipment, 200 (not 201) if an identical unprocessed request already exists. Throttled to 5/hour per IP. |
 | GET | `/api/content/hero/` | Home page hero section (title, subtitle, CTA, background image) — editable in admin |
 | GET | `/api/content/about/` | "About EasyRent" section with its ordered feature list |
 | GET | `/api/content/rental-steps/` | "How to rent" steps, active ones only, ordered |
 | GET | `/api/content/rental-terms/` | "Rental terms" cards, active ones only, ordered |
+| GET | `/api/content/delivery-payment/` | "Доставка і оплата" tab content on the product page (global, same for every product) |
 | GET | `/api/content/settings/` | Company/bank details shown after choosing the IBAN transfer payment method |
 | GET | `/api/home/` | Aggregates hero, about, rental steps/terms, settings, cities, categories, popular equipment and reviews into one response for the landing page |
 
-Content sections (hero, about, rental steps/terms, site settings) are all editable
-through the Django admin — nothing on the home page is hardcoded on the frontend.
+Content sections (hero, about, rental steps/terms, delivery/payment, site settings)
+are all editable through the Django admin — nothing on the home or product page is
+hardcoded on the frontend.
 `HeroSection`, `AboutSection` and `SiteSettings` are singletons (the admin hides
 "Add" once a row exists).
 
