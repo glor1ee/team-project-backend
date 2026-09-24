@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.content.models import (
     AboutFeature,
     AboutSection,
+    DeliveryPaymentInfo,
     HeroSection,
     RentalStep,
     RentalTerm,
@@ -40,6 +41,12 @@ class RentalTermSerializer(serializers.ModelSerializer):
     class Meta:
         model = RentalTerm
         fields = ("order", "icon", "title", "description")
+
+
+class DeliveryPaymentInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryPaymentInfo
+        fields = ("title", "description")
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer):

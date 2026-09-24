@@ -3,10 +3,12 @@ from rest_framework import serializers
 from apps.catalog.models import (
     Category,
     Equipment,
+    EquipmentBadge,
     EquipmentBenefit,
     EquipmentImage,
     EquipmentIncludedItem,
     EquipmentSpec,
+    EquipmentUseCase,
 )
 
 
@@ -64,6 +66,18 @@ class EquipmentBenefitSerializer(serializers.ModelSerializer):
         fields = ("text",)
 
 
+class EquipmentBadgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EquipmentBadge
+        fields = ("label",)
+
+
+class EquipmentUseCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EquipmentUseCase
+        fields = ("text",)
+
+
 class EquipmentDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     availability = AvailabilitySerializer(read_only=True)
@@ -71,9 +85,12 @@ class EquipmentDetailSerializer(serializers.ModelSerializer):
     specs = EquipmentSpecSerializer(many=True, read_only=True)
     included_items = EquipmentIncludedItemSerializer(many=True, read_only=True)
     benefits = EquipmentBenefitSerializer(many=True, read_only=True)
+    badges = EquipmentBadgeSerializer(many=True, read_only=True)
+    suitable_for = EquipmentUseCaseSerializer(many=True, read_only=True)
     available_cities = serializers.SlugRelatedField(
         slug_field="slug", many=True, read_only=True
     )
+    breadcrumbs = serializers.SerializerMethodField()
 
     class Meta:
         model = Equipment
@@ -89,9 +106,23 @@ class EquipmentDetailSerializer(serializers.ModelSerializer):
             "rating",
             "main_image",
             "availability",
+            "badges",
             "images",
             "specs",
             "included_items",
             "benefits",
+            "suitable_for",
             "available_cities",
+            "breadcrumbs",
         )
+
+    def get_breadcrumbs(self, obj):
+        return [
+            {"label": "Головна", "url": "/"},
+            {"label": "Каталог", "url": "/catalog"},
+            {
+                "label": obj.category.name,
+                "url": f"/catalog?category={obj.category.slug}",
+            },
+            {"label": obj.name, "url": None},
+        ]
